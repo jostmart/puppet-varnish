@@ -20,7 +20,7 @@
 class varnish::shmlog (
   $shmlog_dir = '/var/lib/varnish',
   $tempfs     = true,
-  $size       = '170M',
+  $size       = '256M',
 ) {
 
   file { 'shmlog-dir':
