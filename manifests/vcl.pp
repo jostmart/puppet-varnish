@@ -76,6 +76,7 @@ class varnish::vcl (
       mode    => '0444',
       notify  => Service['varnish'],
       require => File[$varnish::vcl::includedir],
+      before  => Exec['restart-varnish'],
     }
 
     concat::fragment { "${title}-header":
@@ -113,16 +114,20 @@ class varnish::vcl (
       recurse => true,
       require => Package['varnish'],
     }
-    $includefiles = ['probes', 'backends', 'directors', 'acls', 'backendselection', 'waf']
+    $includefiles = ['probes', 'backends', 'directors', 'acls', 'backendselection']
 
     varnish::vcl::includefile { $includefiles: }
 
     # web application firewall
-    concat::fragment { 'waf':
-      target  => "${varnish::vcl::includedir}/waf.vcl",
-      content => template('varnish/includes/waf.vcl.erb'),
-      order   => '02',
-      notify  => Service['varnish'],
+    if $enable_waf {
+      varnish::vcl::includefile { 'waf': }
+
+      concat::fragment { 'waf':
+        target  => "${varnish::vcl::includedir}/waf.vcl",
+        content => template('varnish/includes/waf.vcl.erb'),
+        order   => '02',
+        notify  => Service['varnish'],
+      }
     }
 
     #Create resources

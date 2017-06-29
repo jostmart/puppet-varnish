@@ -1,7 +1,9 @@
 class varnish::ncsa (
-  $enable = true,
+  $enable                  = true,
   $varnishncsa_daemon_opts = undef,
-  $log_format = undef,
+  $log_format              = undef,
+  $systemd                 = $varnish::params::systemd,
+  $systemd_conf_path  = $varnish::params::systemd_ncsa_conf_path,
 ) {
 
   $log_format_file = '/etc/varnish/ncsa-format'
@@ -36,6 +38,7 @@ class varnish::ncsa (
     group   => 'root',
     content => template('varnish/varnishncsa-default.erb'),
     notify  => Service['varnishncsa'],
+    require => Package['varnish'],
   }
 
   $service_ensure = $enable ? {
@@ -48,6 +51,20 @@ class varnish::ncsa (
     enable    => $enable,
     require   => Service['varnish'],
     subscribe => File['/etc/default/varnishncsa'],
+  }
+
+  if $systemd {
+    include ::varnish::systemd
+
+    file { $systemd_conf_path:
+      ensure  => 'file',
+      content => template('varnish/varnishncsa.service.erb'),
+      notify  => [
+        Exec['Reload systemd'],
+        Service['varnishncsa'],
+      ],
+    }
+
   }
 
 }

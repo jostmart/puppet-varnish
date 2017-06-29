@@ -74,6 +74,7 @@ class varnish (
   $manage_firewall              = false,
   $varnish_conf_template        = 'varnish/varnish-conf.erb',
   $varnish_identity             = undef,
+  $varnish_name                 = undef,
   $additional_parameters        = {},
   $additional_storages          = {},
   $conf_file_path               = $varnish::params::conf_file_path,
@@ -102,7 +103,7 @@ class varnish (
       case $storage_type {
         'malloc': {
           $varnish_storage_size_percentage = scanf($varnish_storage_size, "%f%%")
-          $varnish_actual_storage_size = sprintf("%dM", floor($::memorysize_mb * $varnish_storage_size_percentage[0]))
+          $varnish_actual_storage_size = sprintf("%dM", floor($::memorysize_mb * $varnish_storage_size_percentage[0] / 100))
         }
 
         default: {
