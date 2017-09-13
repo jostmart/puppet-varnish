@@ -1,5 +1,8 @@
-# NOTE: this file is managed by puppet
 #
+# NOTE: this file is managed by puppet
+# Placed inside josm forked varnish module 
+#
+
 vcl 4.0;
 import std;
 import directors;
@@ -9,9 +12,6 @@ include "includes/probes.vcl";
 
 #Import file with backend definitions
 include "includes/backends.vcl";
-
-#Import file with acl definitions
-include "includes/acls.vcl";
 
 sub vcl_init {
   #Import file with director definitions;
