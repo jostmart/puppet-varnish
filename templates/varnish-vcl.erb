@@ -13,7 +13,7 @@ include "includes/backends.vcl";
 include "includes/directors.vcl";
 
 #Import file with acl definitions
-include "includes/acls.vcl";
+# include "includes/acls.vcl";
 
 sub vcl_recv {
 <%- if @functions['vcl_recv'] -%>
